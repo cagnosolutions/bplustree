@@ -19,6 +19,14 @@ type bplus_non_leaf struct {
 	sub_ptr  [MAX_ORDER]*bplus_node
 }
 
+func (nln *bplus_non_leaf) getKind() int {
+	return nln.kind
+}
+
+func (nln *bplus_non_leaf) getParent() *bplus_non_leaf {
+	return nln.parent
+}
+
 type bplus_leaf struct {
 	kind    int
 	parent  *bplus_non_leaf
@@ -26,6 +34,14 @@ type bplus_leaf struct {
 	entries int
 	key     [MAX_ENTRIES]int
 	data    [MAX_ENTRIES]int
+}
+
+func (ln *bplus_leaf) getKind() int {
+	return ln.kind
+}
+
+func (nln *bplus_leaf) getParent() *bplus_non_leaf {
+	return ln.parent
 }
 
 type bplus_tree struct {
@@ -36,9 +52,11 @@ type bplus_tree struct {
 	head    [MAX_LEVEL]*bplus_node
 }
 
-type bplus_tree_dump func(tree *bplus_tree)
-type bplus_tree_get func(tree *bplus_tree, key int) int
-type bplus_tree_put func(tree *bplus_tree, key, data int) int
-type bplus_tree_get_range func(tree *bplus_tree, key1, key2 int) int
-type bplus_tree_init func(level, order, entries int) *bplus_tree
-type bplus_tree_deinit func(tree *bplus_tree)
+type btree interface {
+	bplus_tree_dump(tree *bplus_tree)
+	bplus_tree_get(tree *bplus_tree, key int) int
+	bplus_tree_put(tree *bplus_tree, key, data int) int
+	bplus_tree_get_range(tree *bplus_tree, key1, key2 int) int
+	bplus_tree_init(level, order, entries int) *bplus_tree
+	bplus_tree_deinit(tree *bplus_tree)
+}
